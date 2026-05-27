@@ -57,6 +57,7 @@
                 break;
             case 'livroTitulo':
                 if($method === 'GET'){
+                    $livroController = new LivroController($db);
                     $livroController->getLivrosPeloTitulo();
                     exit;
                 }
