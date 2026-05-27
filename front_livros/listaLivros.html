@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista dos Livros</title>
+</head>
+<body>
+    <h1>Sistema de Gestão de Acervo Bibliotecário</h1>
+    <hr>
+    <h2>Lista dos Livros</h2>  
+    <h3>Menu</h3>
+    <div>
+        <a href="principal.html"><button>Menu Principal</button></a>
+        <a href="cadastro.html"><button>Cadastrar Livro</button></a>
+    </div> 
+    <br>
+
+    <!-- Filtros -->
+    <div>
+        <input type="text" id="filtroTitulo" placeholder="Buscar livro...">
+        <button id="filtrar">Buscar</button>
+        <p id="mensagem"></p>
+    </div>
+
+    <div>
+        <table id="tabela" border="1">
+            <thead>
+                <tr>
+                    <th>ㅤIDㅤ</th>
+                    <th>ㅤTITULOㅤ</th>
+                    <th>ㅤDESCRICAOㅤ</th>
+                    <th>ㅤAUTORㅤ</th>
+                    <th>ㅤESTOQUEㅤ</th>
+                    <th>ㅤEDITARㅤ</th>
+                    <th>ㅤEXCLUIRㅤ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aqui vai a tabela preenchida dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost/Nicoly/ProjetoGestaoAcervoBibliotecario/api_livros";
+
+        async function buscarDadosTabela() {
+            const resposta = await fetch(`${API_BASE}/livros`);
+
+            if (!resposta.ok) {
+                const erroData = await resposta.json();
+                throw new Error(erroData.message || `Erro HTTP: ${resposta.status}`);
+            }
+
+            return await resposta.json();
+        }
+
+        async function preenchaTabela(dados) {
+            const tabelaCorpo = document.querySelector("#tabela > tbody");
+            tabelaCorpo.innerHTML = "";
+
+            if (!dados || dados.length === 0) {
+                const tr = document.createElement("tr");
+                const td = document.createElement("td");
+                td.colSpan = 7;
+                td.textContent = "Nenhum livro cadastrado.";
+                tr.appendChild(td);
+                tabelaCorpo.appendChild(tr);
+                return;
+            }
+
+            dados.forEach((livro) => {
+                const tr = document.createElement("tr");
+
+                const tdId = document.createElement("td");
+                tdId.textContent = livro.id_livro;
+                tr.appendChild(tdId);
+
+                const tdTitulo = document.createElement("td");
+                tdTitulo.textContent = livro.titulo;
+                tr.appendChild(tdTitulo);
+
+                const tdDescricao = document.createElement("td");
+                tdDescricao.textContent = livro.descricao;
+                tr.appendChild(tdDescricao);
+
+                const tdAutor = document.createElement("td");
+                tdAutor.textContent = livro.autor;
+                tr.appendChild(tdAutor);
+
+                const tdEstoque = document.createElement("td");
+                tdEstoque.textContent = livro.estoque;
+                tr.appendChild(tdEstoque);
+
+                const tdEditar = document.createElement("td");
+                tdEditar.classList.add("edit-icon");
+                const linkEditar = document.createElement("a");
+                linkEditar.textContent = "ﾠ𓂃🖊ﾠ";
+                tdEditar.appendChild(linkEditar);
+                tr.appendChild(tdEditar);
+
+                const tdDelete = document.createElement("td");
+                tdDelete.classList.add("delete-icon");
+                const btnDelete = document.createElement("button");
+                btnDelete.textContent = "ﾠ🗑ﾠ";
+                tdDelete.appendChild(btnDelete);
+                tr.appendChild(tdDelete);
+
+                tabelaCorpo.appendChild(tr);
+            });
+        }
+
+          async function buscarLivroTitulo(titulo) {
+            const params = new URLSearchParams();
+            if (titulo) {
+                params.append("titulo", titulo);
+            }
+            try {
+                const resposta = await fetch(`${API_BASE}/livrosTitulo?${params.toString()}`);
+                if (!resposta.ok) {
+                    const erroData = await resposta.json();
+                    throw new Error(erroData.message || `Erro HTTP: ${resposta.status}`);
+                }
+                return await resposta.json();
+                return livros;
+            } catch (error) {
+                throw error;
+            }
+        }
+        
+        async function filtrarLivro() {
+            const msg = document.getElementById("mensagem");
+            const titulo = document.getElementById("filtroTitulo").value;
+            
+            if (!titulo) {
+               msg.textContent = "Por favor, insira um título válido.";
+               msg.style.color = "red";
+               const dados = await buscarDadosTabela();
+               preenchaTabela(dados);
+               return;
+            }
+
+            try {
+                const livros = await buscarLivroTitulo(titulo);
+                preencherTabela(livros);
+                titulo.value = "";
+
+            } catch (erro) {
+                msg.textContent = `Erro ao filtrar livros: ${error.message}`;
+                msg.style.color = "red";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const dados = await buscarDadosTabela();
+            preenchaTabela(dados);
+
+            // Adicionando o evento de clique ao botão de filtrar
+            document.getElementById("filtrar").addEventListener("click", filtrarLivro);
+        });
+    </script>
+</body>
+</html>

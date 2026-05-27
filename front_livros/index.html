@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão de Acervo Bibliotecário</title>
+</head>
+<body>
+    <h1>Página de Login</h1>
+    <form id="FormLogin">
+        <div class="form-container">
+            <label for="email">E-mail:</label>
+            <input type="text" id="email" placeholder="E-mail" required>
+            <br><br>
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <br><br>
+            <button type="submit">Entrar</button>
+            <br><br>
+            <div class="mensagem-user">
+                <p id="mensagem"></p>
+            </div>                  
+        </div>
+    </form>
+    <script>
+        // Ajuste a API_BASE conforme necessário para o seu ambiente
+        const API_BASE = "../api_livros/public";
+
+        function getFormData() {
+            return {
+                email: document.getElementById("email").value,
+                senha: document.getElementById("senha").value
+            };
+        }
+
+        async function Login(user) {
+            try {
+                const resposta = await fetch(`${API_BASE}/login`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(user)
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(dados.message || `Erro HTTP: ${resposta.status}`);
+                }
+
+                return dados;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        document.getElementById("FormLogin").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const msg = document.getElementById("mensagem");
+            const user = getFormData();
+            
+            msg.textContent = "Autenticando...";
+            msg.style.color = "blue";
+
+            try {
+                const resultado = await Login(user);
+                
+                if (resultado && (resultado.id_usuario || resultado.id)) { 
+                    sessionStorage.setItem("usuario", JSON.stringify(resultado));
+                    msg.textContent = "Login realizado com sucesso! Redirecionando...";
+                    msg.style.color = "green";
+                    
+                    setTimeout(() => {
+                        window.location.href = "principal.html";
+                    }, 1000);
+                } else {
+                    msg.textContent = "Login ou senha incorretos.";
+                    msg.style.color = "red";
+                }
+            } catch (error) {
+                msg.textContent = `Erro no login: ${error.message}`;                    
+                msg.style.color = "red";
+            }
+        });
+    </script>
+</body>
+</html>
