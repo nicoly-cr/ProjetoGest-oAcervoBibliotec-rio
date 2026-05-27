@@ -23,14 +23,14 @@
         }
 
         public function getLivrosPeloTitulo($titulo){
-            $stmt = $this->$db->prepare("
+            $stmt = $this->db->prepare("
                 SELECT * 
                 FROM Livros
                 JOIN Estoque ON Estoque.id_livro = Livros.id_livro
                 WHERE Livros.titulo LIKE :titulo
             ");
 
-            $stmt->bindValue(':titulo', '%' . $titulo . '%') 
+            $stmt->bindValue(':titulo', '%' . $titulo . '%');
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }

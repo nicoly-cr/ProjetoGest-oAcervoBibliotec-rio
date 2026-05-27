@@ -63,7 +63,7 @@
                 }
                 http_response_code(405); //Não reconhece o método
                 echo json_encode([
-                    'error' -> "Método não permitido!"
+                    'error' => "Método não permitido!"
                 ]);
                 break;
         }

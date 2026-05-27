@@ -118,7 +118,7 @@
                 params.append("titulo", titulo);
             }
             try {
-                const resposta = await fetch(`${API_BASE}/livrosTitulo?${params.toString()}`);
+                const resposta = await fetch(`${API_BASE}/livroTitulo?${params.toString()}`);
                 if (!resposta.ok) {
                     const erroData = await resposta.json();
                     throw new Error(erroData.message || `Erro HTTP: ${resposta.status}`);
@@ -144,11 +144,11 @@
 
             try {
                 const livros = await buscarLivroTitulo(titulo);
-                preencherTabela(livros);
+                preenchaTabela(livros);
                 titulo.value = "";
 
             } catch (erro) {
-                msg.textContent = `Erro ao filtrar livros: ${error.message}`;
+                msg.textContent = `Erro ao filtrar livros: ${erro.message}`;
                 msg.style.color = "red";
             }
         }
