@@ -127,8 +127,8 @@
 -- Atividade prática 4
 
 	UPDATE Usuarios 
-		SET sobrenome = 'Nicoly Roviero'
-        WHERE id_usuario = 1;
+		SET sobrenome = 'Mendes'
+        WHERE id_usuario = 9;
         
 	UPDATE Estoque 
 		SET quantidade_atual = quantidade_atual + 10
@@ -141,3 +141,19 @@
 	UPDATE Estoque
 		SET quantidade_atual = quantidade_atual + 1
 		WHERE quantidade_atual = 0;
+        
+-- Ajustado com aspas simples e string na senha
+	SELECT * FROM Usuarios WHERE email = 'nicoly.roviero@email.com' AND senha = '12345678';
+
+	SELECT 
+	l.id_livro, l.titulo, l.descricao, l.autor,
+	e.quantidade_atual 
+	AS estoque 
+	FROM Livros l 
+	INNER JOIN Estoque e 
+	ON l.id_livro = e.id_livro;
+
+	SELECT * 
+    FROM Livros
+    JOIN Estoque ON Estoque.id_livro = Livros.id_livro
+    WHERE Livros.titulo LIKE "%O%";
