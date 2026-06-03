@@ -8,7 +8,7 @@
     </head>
     <body>
     <h1>CADASTRAR LIVROS</h1>
-    <form id="FormLivros">
+    <form id="FormCadastrar">
         <div class="form-container">
             <label for="titulo">Título:</label>
             <input type="text" id="titulo" placeholder="Título" required>
@@ -29,7 +29,7 @@
     <script>
         const API_BASE = "http://localhost/Nicoly/ProjetoGestaoAcervoBibliotecario/api_livros";
 
-        async function getFormData {
+        async function getFormData(){
             return {
                titulo: document.getElementById('titulo').value,
                autor: document.getElementById('autor').value,
@@ -54,6 +54,7 @@
             }
             
         }
+
         async function handleFormSubmit(event){
             event.preventDefault();
             const msg = document.getElementById('mensagem');
@@ -69,9 +70,11 @@
                 msg.style.color = "red";
             }
         }
+
         document.addEventListener("DOMContentLoaded", () => {
             documet.getElementById("FormCadastrar").addEventListener('submit', handleFormSubmit);
         });
+
     </script>
             
     </body>

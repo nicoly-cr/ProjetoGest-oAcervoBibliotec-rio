@@ -46,15 +46,16 @@
                     echo json_encode(["error" => "Método não permitido"]);
                 }
                 break;
-            case 'livros':
-                if ($method === "GET") {
+            case 'livro':
+                if ($method === 'GET') {
                     $livroController = new LivroController($db);
                     $livroController->getLivros();
                 }
-            default:
-                http_response_code(404);
-                echo json_encode(["error" => "Rota não encontrada", "route" => $route]);
                 break;
+
+                if ($method == 'POST'){
+                    $livroController->createLivro();
+                }
             case 'livroTitulo':
                 if($method === 'GET'){
                     $livroController = new LivroController($db);
