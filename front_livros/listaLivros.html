@@ -2,25 +2,24 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista dos Livros</title>
+    <title>Lista Livros</title>
 </head>
 <body>
-    <h1>Sistema de Gestão de Acervo Bibliotecário</h1>
+    <h1>PROJETO ACERVO BIBLIOTECARIO</h1>
     <hr>
-    <h2>Lista dos Livros</h2>  
-    <h3>Menu</h3>
+    <h2>Lista Livros</h2>
+    <h3>MENU</h3>
     <div>
-        <a href="principal.html"><button>Menu Principal</button></a>
+        <a href="principal.html"><button>Menu Inicial</button></a>
         <a href="cadastro.html"><button>Cadastrar Livro</button></a>
-    </div> 
+    </div>
     <br>
 
-    <!-- Filtros -->
+    <!-- //[Sprint7]-Implementa Filtro Livro -->    
     <div>
-        <input type="text" id="filtroTitulo" placeholder="Buscar livro...">
-        <button id="filtrar">Buscar</button>
+        <input type="text" placeholder="Busca por Título" id="filtroTitulo">
+        <button id="filtrar">Filtrar</button>
         <p id="mensagem"></p>
     </div>
 
@@ -36,129 +35,149 @@
                     <th>ㅤEDITARㅤ</th>
                     <th>ㅤEXCLUIRㅤ</th>
                 </tr>
+
             </thead>
             <tbody>
-                <!-- Aqui vai a tabela preenchida dinamicamente -->
+                <!--os dados da tabela preechidos dinamicamente-->
             </tbody>
         </table>
     </div>
 
     <script>
         const API_BASE = "http://localhost/Nicoly/ProjetoGestaoAcervoBibliotecario/api_livros";
-
+        
         async function buscarDadosTabela() {
-            const resposta = await fetch(`${API_BASE}/livros`);
+            try {
+                const resposta = await fetch(`${API_BASE}/livro`);
+                
+                if (!resposta.ok){ //alterado
+                    const erroData = await resposta.json(); //alterado
+                    throw new Error(erroData.message || `Erro HTTP: ${resposta.status}`);
+                }
 
-            if (!resposta.ok) {
-                const erroData = await resposta.json();
-                throw new Error(erroData.message || `Erro HTTP: ${resposta.status}`);
+                const dados = await resposta.json();
+                return dados;
+            }catch(erro){
+                throw erro;
             }
-
-            return await resposta.json();
         }
 
-        async function preenchaTabela(dados) {
-            const tabelaCorpo = document.querySelector("#tabela > tbody");
-            tabelaCorpo.innerHTML = "";
+        async function preencherTabela(dados){
+            const tabelaCorpo = document.querySelector('#tabela tbody');
+            tabelaCorpo.innerHTML = ""; //limpa tabela antes de preencher
 
-            if (!dados || dados.length === 0) {
-                const tr = document.createElement("tr");
-                const td = document.createElement("td");
-                td.colSpan = 7;
-                td.textContent = "Nenhum livro cadastrado.";
+            if (!dados || dados.length === 0){
+                const tr = document.createElement('tr');
+                const td = document.createElement('td'); 
+                td.colSpan = 9;
+                td.textContent = "Nenhum Livro Cadastrado.";
                 tr.appendChild(td);
                 tabelaCorpo.appendChild(tr);
                 return;
             }
 
-            dados.forEach((livro) => {
-                const tr = document.createElement("tr");
+            dados.forEach(livro => {
+                const tr = document.createElement('tr');
 
-                const tdId = document.createElement("td");
+                //ID
+                const tdId = document.createElement('td');
                 tdId.textContent = livro.id_livro;
                 tr.appendChild(tdId);
 
-                const tdTitulo = document.createElement("td");
+                //TITULO
+                const tdTitulo = document.createElement('td');
                 tdTitulo.textContent = livro.titulo;
                 tr.appendChild(tdTitulo);
-
-                const tdDescricao = document.createElement("td");
+                
+                //DESCRICAO
+                const tdDescricao = document.createElement('td');
                 tdDescricao.textContent = livro.descricao;
                 tr.appendChild(tdDescricao);
 
-                const tdAutor = document.createElement("td");
+                //AUTOR
+                const tdAutor = document.createElement('td');
                 tdAutor.textContent = livro.autor;
                 tr.appendChild(tdAutor);
 
-                const tdEstoque = document.createElement("td");
-                tdEstoque.textContent = livro.estoque;
+                //ESTOQUE
+                const tdEstoque = document.createElement('td');
+                tdEstoque.textContent = livro.estoque; //alterado
                 tr.appendChild(tdEstoque);
 
-                const tdEditar = document.createElement("td");
-                tdEditar.classList.add("edit-icon");
-                const linkEditar = document.createElement("a");
-                linkEditar.textContent = "ﾠ𓂃🖊ﾠ";
+                //EDITAR
+                const tdEditar = document.createElement('td');
+                tdEditar.classList.add('edit-icon');
+                const linkEditar = document.createElement('a');
+                linkEditar.textContent = 'ﾠ𓂃🖊ﾠ';
                 tdEditar.appendChild(linkEditar);
                 tr.appendChild(tdEditar);
-
-                const tdDelete = document.createElement("td");
-                tdDelete.classList.add("delete-icon");
-                const btnDelete = document.createElement("button");
-                btnDelete.textContent = "ﾠ🗑ﾠ";
+                
+                //EXCLUIR
+                const tdDelete = document.createElement('td');
+                tdDelete.classList.add('delete-icon');
+                const btnDelete = document.createElement('button');
+                btnDelete.textContent = 'ﾠ🗑ﾠ';
                 tdDelete.appendChild(btnDelete);
                 tr.appendChild(tdDelete);
 
                 tabelaCorpo.appendChild(tr);
-            });
+
+            })
+
         }
 
-          async function buscarLivroTitulo(titulo) {
+        //[Sprint7]-Implementa Filtro Livro
+        async function buscarLivroTitulo(titulo){
             const params = new URLSearchParams();
             if (titulo) {
                 params.append("titulo", titulo);
             }
             try {
                 const resposta = await fetch(`${API_BASE}/livroTitulo?${params.toString()}`);
-                if (!resposta.ok) {
+
+                if (!resposta.ok){
                     const erroData = await resposta.json();
                     throw new Error(erroData.message || `Erro HTTP: ${resposta.status}`);
                 }
-                return await resposta.json();
+                const livros = await resposta.json();
                 return livros;
-            } catch (error) {
-                throw error;
+            } catch(erro){
+                throw erro;
             }
+
         }
-        
-        async function filtrarLivro() {
-            const msg = document.getElementById("mensagem");
-            const titulo = document.getElementById("filtroTitulo").value;
-            
+
+        //[Sprint7]-Implementa Filtro Livro
+        async function filtrarLivro(){
+            const msg = document.getElementById('mensagem');
+            const titulo = document.getElementById('filtroTitulo').value;
+
             if (!titulo) {
-               msg.textContent = "Por favor, insira um título válido.";
-               msg.style.color = "red";
-               const dados = await buscarDadosTabela();
-               preenchaTabela(dados);
-               return;
+                msg.textContent = "Preencha com um titulo para realizar a busca.";
+                msg.style.color = "red";
+                const dados = await buscarDadosTabela();
+                preencherTabela(dados);
+                return;
             }
 
             try {
                 const livros = await buscarLivroTitulo(titulo);
-                preenchaTabela(livros);
+                preencherTabela(livros);
                 titulo.value = "";
-
-            } catch (erro) {
-                msg.textContent = `Erro ao filtrar livros: ${erro.message}`;
+                msg.textContent = "";
+            } catch(erro){
+                msg.textContent = `Erro: ${erro.message}`;
                 msg.style.color = "red";
             }
         }
 
+
         document.addEventListener("DOMContentLoaded", async () => {
             const dados = await buscarDadosTabela();
-            preenchaTabela(dados);
+            preencherTabela(dados);
 
-            // Adicionando o evento de clique ao botão de filtrar
-            document.getElementById("filtrar").addEventListener("click", filtrarLivro);
+            //[Sprint7]-Implementa Filtro Livro
+            document.getElementById('filtrar').addEventListener('click', filtrarLivro);
         });
     </script>
 </body>

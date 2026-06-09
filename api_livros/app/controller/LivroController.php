@@ -11,6 +11,7 @@ class LivroController {
     private $db;
 
     public function __construct($db) {
+        $this->db = $db;
         //Conectar no DB e instanciar o model e consultar os livros
         $this->modelLivro = new LivroModel($db);
         //Instanciar a view
@@ -36,51 +37,56 @@ class LivroController {
         }
     }
 
-    public function createLivro(){
+    public function createLivro() {
         $data = json_decode(file_get_contents("php://input"), true);
 
-        if(isset($data['titulo']) && isset($data['descricao']) && isset($data['autor'])){
-
-            try{
+        if ( isset($data['titulo']) && 
+            isset($data['descricao']) && 
+            isset($data['autor']) ) {
+            
+            try {
                 $this->db->beginTransaction();
                 $idLivro = $this->modelLivro->createLivro(
                     $data['titulo'],
-                    $data['descricao'],
-                    $data['autor']
+                    $data['autor'],
+                    $data['descricao']
                 );
 
-                if(!$idLivro){
-                    throw new Exepition ('Não foi possível inserir o livro.');
+                if (!$idLivro){
+                    throw new Exception('Nao foi possivel inserir o Livro');
                 }
-                $estoque$this->modelEstoque->createEstoque($idLivro, 0);
+                
+                $estoqueCriado = $this->modelEstoque->createEstoque($idLivro, 0);
 
-                if(!estoqueCriado){
-                    throw new Exeption('Não foi possível inserir o estoque inicial.');
+                if (!$estoqueCriado){
+                    throw new Exception('Nao foi possivel inserir o Estoque inicial do Calori!');
                 }
 
                 $this->db->commit();
+
+                //[Sprint8] inserido codigo HTTP_RESPONSE 201 - Registro criado com sucesso
                 $this->viewLivro->sendResponse([
-                    'message' => 'Livro criado com sucesso.',
+                    'message' => 'Livro criado com sucesso!',
                     'id_livro' => $idLivro
-                ]);
-            }cacth(Throwable $e){
-                if($this->db->inTransaction()){
+                ], 201);
+                
+            } catch(Throwable $e){
+                if ($this->db->inTransaction()){
                     $this->db->rollback();
                 }
 
                 $this->viewLivro->sendResponse([
-                    'message' => 'Erro ao cadastrar novo livro.',
+                    'message' => 'Erro ao cadastrar Novo Livro',
                     'detalhe' => $e->getMessage()
                 ], 400);
             }
-            
-        }else{
+        } else {
             $this->viewLivro->sendResponse(
-                ['message' => 'Dados inválidos.'],
+                ['message' => 'Dados invalidos!'],
                 400
             );
-        }
+        } 
     }
-} 
 
+}
 ?>

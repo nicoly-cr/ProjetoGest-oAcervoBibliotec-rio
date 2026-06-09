@@ -35,15 +35,15 @@ class LivroModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function createLivro($titulo, $autor, $descricao){
+    public function createLivro($titulo, $autor, $descricao) {
         $stmt = $this->db->prepare("
-            INSERT INTO Livros (TITULO, AUTOR, DESCRICAO) 
+            INSERT INTO Livros (TITULO, AUTOR, DESCRICAO)
             VALUES (:titulo, :autor, :descricao)
         ");
         $stmt->bindValue(':titulo', $titulo);
         $stmt->bindValue(':autor', $autor);
         $stmt->bindValue(':descricao', $descricao);
-        if ($stmt->execute()){
+        if ($stmt->execute()) {
             return $this->db->lastInsertId();
         };
         return false;
