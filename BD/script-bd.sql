@@ -22,7 +22,6 @@
     CREATE TABLE Estoque (
 		id_estoque INT PRIMARY KEY AUTO_INCREMENT,
 		id_livro INT,
-        id_usuario INT,
         CONSTRAINT fk_estoque_livro
 			FOREIGN KEY (id_livro) REFERENCES Livros(id_livro)
             ON DELETE CASCADE,
@@ -79,17 +78,17 @@
 	('A Metamorfose', 'Gregor Samsa acorda transformado em inseto.', 'Franz Kafka'),
 	('O Processo', 'Um homem processado sem saber o motivo.', 'Franz Kafka');
     
-    INSERT INTO Estoque (id_livro, id_usuario, quantidade_atual) VALUES
-	(1,1,10),
-	(2,2,5),
-	(3,3,8),
-	(4,4,12),
-	(5,5,7),
-	(6,6,15),
-	(7,7,9),
-	(8,8,6),
-	(9,9,11),
-	(10,10,4);
+    INSERT INTO Estoque (id_livro, quantidade_atual) VALUES
+	(1,10),
+	(2,5),
+	(3,8),
+	(4,12),
+	(5,7),
+	(6,15),
+	(7,9),
+	(8,6),
+	(9,11),
+	(10,4);
     
     INSERT INTO Log_movimentacao_estoque (id_usuario, id_livro, data_movimentacao, quantidade, tipo) VALUES
 	(1,1,'2026-02-01',5,'ENTRADA'),
@@ -157,3 +156,21 @@
     FROM Livros
     JOIN Estoque ON Estoque.id_livro = Livros.id_livro
     WHERE Livros.titulo LIKE "%O%";
+    
+    SELECT *
+    FROM Estoque;
+    
+    INSERT INTO Estoque (id_livro, quantidade_atual)
+    VALUES (5, 0);
+    
+    USE livro_db;
+    SELECT
+    Livros.id_livro,
+    Livros.titulo,
+    Livros.descricao,
+    Livros.autor,
+    Estoque.id_estoque,
+    Estoque.quantidade_atual as estoque
+    FROM Livros
+    JOIN Estoque ON Estoque.id_livro = Livros.id_livro
+    WHERE Livros.id_livro = 1; 

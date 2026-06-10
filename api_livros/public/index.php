@@ -49,7 +49,6 @@ try {
             break;
         case 'livro':
             if ($method === 'GET') {
-                $livroController = new LivroController($db);
                 $livroController->getLivros();
             }
             //[Sprint8] removido break
@@ -65,7 +64,7 @@ try {
                 'error' => "Método não permitido em /livro"
             ]);
             break;
-
+        
         //[SPRINT7] Implementa Filtro Livros
         case 'livroTitulo':
             if ($method === 'GET'){
@@ -78,6 +77,20 @@ try {
                 'error' => "Método não permitido!"
             ]);
             break;
+
+        //[SPRINT9] Implemnetar editar livro
+        case 'livroTitulo':
+            if ($method === 'GET'){
+                //$livroController = new LivroController($db);
+                $livroController->getLivrosPeloId();
+                exit;
+            }
+            http_response_code(405); //nao reconhece o metodo
+            echo json_encode([
+                'error' => "Método não permitido!"
+            ]);
+            break;
+
 
     }
 } catch (Throwable $e) {

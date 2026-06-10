@@ -37,6 +37,19 @@ class LivroController {
         }
     }
 
+    public function getLivrosPeloId() {
+        $id = $_GET['id'];
+        if (isset($id)){
+            $livro = $this->modelLivro->getLivrosPeloId($id);
+            $this->viewLivro->sendResponse($livro, 200);
+        } else {
+            $this->viewLivro->sendResponse(
+                ['message' => 'Id inválido.'],
+                400
+            );
+        }
+    }
+
     public function createLivro() {
         $data = json_decode(file_get_contents("php://input"), true);
 
