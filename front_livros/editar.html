@@ -1,68 +1,111 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Atualizar Livro</title>
-    </head>
-    <body>
-        <h1>Atualizar Livro</h1>
-        <form id="formLivro">
-            <label>
-                ID:
-                <input type="number" id="id" required disabled>
-            </label>
-            <br><br>
-            <label>
-                Título:
-                <input type="text" id="titulo" required>
-            </label>
-            <br><br>
-            <label>
-                Descrição:
-                <input type="text" id="descricao" required>
-            </label>
-            <br><br>
-            <label>
-                Autor:
-                <input type="text" id="autor" required>
-            </label>
-            <br><br>
-            <button type="submit">Atualizar Livro</button>
-        </form>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar Livro</title>
+</head>
+<body>
+    <h1>Atualizar Livros</h1>
+    <form id="formLivro">
+        <label>
+            id:
+            <input type="number" id="id" required disabled>
+        </label>
+        <br><br>
+        <label>
+            Título:
+            <input type="text" id="titulo" required>
+        </label>
+        <br><br>
+        <label>
+            Descrição:
+            <input type="text" id="descricao" required>
+        </label>
+        <br><br>
+        <label>
+            Autor:
+            <input type="text" id="autor" required>
+        </label>
+        <br><br>
+        <button type="submit">Atualizar Livro</button>
+    </form>
 
-        <p id="mensagem"></p>
+    <p id="mensagem"></p>
 
-        <script>
-            const API_BASE = "http://localhost/Nicoly/ProjetoGestaoAcervoBibliotecario/api_livros";
+    <script>
+        const API_BASE = "http://localhost/Nicoly/ProjetoGestaoAcervoBibliotecario/api_livros";
 
-            async function getLivro(id) {
-                try {
-                    const resposta = await fetch(`${API_BASE}/livroId?id=${id}`);
-                    if (!resposta.ok){
-                        const erroData = await resposta.json();
-                        throw new Error(erroData.message || `Erro HTTP: ${resposta.status}`);
-                    }
-                    const livro = await resposta.json();
-                    return livro;
-                } catch (erro) {
-                    throw erro;
+        async function getLivro(id) {
+            try {
+                const resposta = await fetch(`${API_BASE}/livroId?id=${id}`);
+                if (!resposta.ok) {
+                    const erroData = await resposta.json();
+                    throw new Error(erroData.message || `Erro HTTP: ${resposta.status}`);
                 }
+                return await resposta.json();
+            } catch (erro){
+                throw erro;
             }
+        }
 
-            function preencherForm(dados){
-                document.getElementById('id').value = dados.id_livro;
-                document.getElementById('titulo').value = dados.titulo;
-                document.getElementById('autor').value = dados.autor;
-                document.getElementById('descricao').value = dados.descricao;
+        function preencherForm(dados){
+            document.getElementById('id').value = dados.id_livro;
+            document.getElementById('titulo').value = dados.titulo;
+            document.getElementById('autor').value = dados.autor;
+            document.getElementById('descricao').value = dados.descricao;
+        }
+
+        function getLivroFormData(){
+            return {
+                id: document.getElementById('id').value,
+                titulo: document.getElementById('titulo').value,
+                autor: document.getElementById('autor').value,
+                descricao: document.getElementById('descricao').value
             }
+        }
 
-            document.addEventListener("DOMContentLoaded", async () => {
-                const params = new URLSearchParams(window.location.search);
-                const id = params.get("id");
-                const dados = await getLivro(id);
-                preencherForm(dados);
-            })
-        </script>
-    </body>
+        async function atualizarLivro(livro){
+            try {
+                const resposta = await fetch(`${API_BASE}/livro`, {
+                    method: 'PUT',
+                    headers: {'Content-type': 'application/json'},
+                    body: JSON.stringify(livro)
+                });
+                const dados = await resposta.json();
+                if(!resposta.ok){
+                    throw new Error(`HTTP: ${resposta.status} . ${dados.message}`);
+                }
+                return dados;
+            } catch(erro){
+                throw erro;
+            }
+        }
+
+        async function enviarForm() {
+            event.preventDefault();
+            const form = document.getElementById('formLivro');
+            const msg = document.getElementById('mensagem');
+
+            const livro = await getLivroFormData();
+
+            try{
+                const resultado = await atualizarLivro(livro);
+                msg.textContent = "Livro atualizado com sucesso!";
+                msg.style.color = "green";
+            } catch(erro){
+                msg.textContent = `Erro ao atualizar o Livro: ${erro}`;
+                msg.style.color = "red";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get("id");
+            const dados = await getLivro(id);
+            preencherForm(dados);
+            document.getElementById('formLivro').addEventListener('submit', enviarForm);
+        })
+    </script>
+</body>
 </html>
