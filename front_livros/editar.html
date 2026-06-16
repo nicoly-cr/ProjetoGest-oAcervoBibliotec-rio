@@ -28,8 +28,8 @@
                 <input type="text" id="autor" required>
             </label>
             <br><br>
+            <button type="submit">Atualizar Livro</button>
         </form>
-        <button type="submit">Atualizar Livro</button>
 
         <p id="mensagem"></p>
 
@@ -51,14 +51,13 @@
             }
 
             function preencherForm(dados){
-                document.getElementById('id').value = dados.id_livro,
-                document.getElementById('titulo').value = dados.titulo,
-                document.getElementById('autor').value = dados.autor,
-                document.getElementById('descricao').value = dados.descricao
+                document.getElementById('id').value = dados.id_livro;
+                document.getElementById('titulo').value = dados.titulo;
+                document.getElementById('autor').value = dados.autor;
+                document.getElementById('descricao').value = dados.descricao;
             }
 
             document.addEventListener("DOMContentLoaded", async () => {
-                //Toda vez que a página carregar buscar dados preencher tela
                 const params = new URLSearchParams(window.location.search);
                 const id = params.get("id");
                 const dados = await getLivro(id);
