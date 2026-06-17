@@ -25,6 +25,7 @@ PROJETO_RAIZ/
 │   │   ├── LivroController.php
 │   │   └── UsuarioController.php
 │   ├── model/                   # Modelos (Comunicação com a Base de Dados)
+│   │   ├── EstoqueModel.php
 │   │   ├── LivroModel.php
 │   │   └── UsuarioModel.php
 │   └── view/                    # Visualizações (Formatadores de resposta da API)
@@ -46,6 +47,7 @@ PROJETO_RAIZ/
 │
 ├── front_livros/                # Interface do Utilizador (Frontend)
 │   ├── cadastro.html            # Ecrã de cadastro de utilizadores/livros
+│   ├── editar.html              #
 │   ├── index.html               # Ecrã de login / Entrada principal
 │   ├── listaLivros.html         # Painel de visualização do acervo
 │   ├── movimentarEstoque.html   # Ecrã de entrada e saída de livros
