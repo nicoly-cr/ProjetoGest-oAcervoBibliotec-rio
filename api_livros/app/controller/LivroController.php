@@ -4,59 +4,62 @@ require_once "../app/model/LivroModel.php";
 require_once "../app/view/LivroView.php";
 require_once "../app/model/EstoqueModel.php";
 
-class LivroController {
+class LivroController{
     private $modelLivro;
     private $viewLivro;
     private $modelEstoque;
     private $db;
 
-    public function __construct($db) {
+    public function __construct($db){
         $this->db = $db;
-        //Conectar no DB e instanciar o model e consultar os livros
+        //conectar no DB e consultar Livros existentes
         $this->modelLivro = new LivroModel($db);
-        //Instanciar a view
+        //Exibir os Livros para o Front-end
         $this->viewLivro = new LivroView();
-        //Implementar criar livro
+        //[SPRINT8] Implementar Criar Livro
         $this->modelEstoque = new EstoqueModel($db);
     }
 
-    public function getLivros() {
+    public function getLivros(){
         $livros = $this->modelLivro->buscarLivros();
-        $this->viewLivro->sendResponse($livros, 200);
+        $this->viewLivro->sendResponse($livros);
     }
 
-    public function getLivrosPeloTitulo() {
+    //[SPRINT7] Implementa Filtro Livros
+    public function getLivrosPeloTitulo(){
         $titulo = $_GET['titulo'];
-        if(isset($titulo)){
+        if (isset($titulo)){
             $data = $this->modelLivro->getLivrosPeloTitulo($titulo);
             $this->viewLivro->sendResponse($data, 200);
-        } else {
+        }else {
             $this->viewLivro->sendResponse([
                 'message' => 'Título inválido.'
-            ], 400);
+            ] , 400);
         }
     }
 
-    public function getLivrosPeloId() {
-        $id = $_GET['id'];
+    //[Sprint9] Implementa o Editar Livro
+    public function getLivrosPeloId(){
+        $id = $_GET['id'] ?? null;
         if (isset($id)){
-            $livro = $this->modelLivro->getLivrosPeloId($id);
+            $livro = $this->modelLivro->getLivroPeloId($id);
             $this->viewLivro->sendResponse($livro, 200);
-        } else {
+        }else{
             $this->viewLivro->sendResponse(
-                ['message' => 'Id inválido.'],
+                ['message' => 'Id invalido'],
                 400
             );
         }
     }
 
+    //[SPRINT8] Implementa Novo Livro
     public function createLivro() {
         $data = json_decode(file_get_contents("php://input"), true);
 
         if ( isset($data['titulo']) && 
             isset($data['descricao']) && 
             isset($data['autor']) ) {
-            
+
             try {
                 $this->db->beginTransaction();
                 $idLivro = $this->modelLivro->createLivro(
@@ -68,7 +71,7 @@ class LivroController {
                 if (!$idLivro){
                     throw new Exception('Nao foi possivel inserir o Livro');
                 }
-                
+
                 $estoqueCriado = $this->modelEstoque->createEstoque($idLivro, 0);
 
                 if (!$estoqueCriado){
@@ -82,7 +85,7 @@ class LivroController {
                     'message' => 'Livro criado com sucesso!',
                     'id_livro' => $idLivro
                 ], 201);
-                
+
             } catch(Throwable $e){
                 if ($this->db->inTransaction()){
                     $this->db->rollback();
@@ -101,12 +104,13 @@ class LivroController {
         } 
     }
 
+    //[SPRINT9]
     public function updateLivro(){
         $data = json_decode(file_get_contents("php://input"), true);
-        if(isset($data['id']) && isset($data['titulo']) && isset($data['autor']) && isset($data['descricao'])){
+        if (isset($data['id']) && isset($data['titulo']) && isset($data['autor']) && isset($data['descricao'])){
             $result = $this->modelLivro->updateLivro($data['id'], $data['titulo'], $data['autor'], $data['descricao']);
             $this->viewLivro->sendResponse([
-                'message' => 'Livro atualizado com sucesso!'
+                'message' => 'Livro atualizado com sucesso'
             ], 200);
         }else{
             $this->viewLivro->sendResponse([

@@ -60,6 +60,7 @@ try {
                 $livroController->createLivro();
                 exit;
             }
+            //[Sprint9]
             if ($method === 'PUT'){
                 $livroController->updateLivro();
                 exit;
@@ -70,7 +71,7 @@ try {
                 'error' => "Método não permitido em /livro"
             ]);
             break;
-        
+
         //[SPRINT7] Implementa Filtro Livros
         case 'livroTitulo':
             if ($method === 'GET'){
@@ -84,8 +85,8 @@ try {
             ]);
             break;
 
-        //[SPRINT9] Implemnetar editar livro
-        case 'livroTitulo':
+        //[Sprint9] Implementa Editar Livro
+        case 'livroId':
             if ($method === 'GET'){
                 //$livroController = new LivroController($db);
                 $livroController->getLivrosPeloId();
@@ -96,8 +97,6 @@ try {
                 'error' => "Método não permitido!"
             ]);
             break;
-
-
     }
 } catch (Throwable $e) {
     http_response_code(500); //Internal Server Error

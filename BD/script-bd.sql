@@ -164,6 +164,10 @@
     VALUES (5, 0);
     
     USE livro_db;
+
+	UPDATE Livros SET titulo = titulo, autor, descricao
+	WHERE id_livro = id_livro;
+	
     SELECT
     Livros.id_livro,
     Livros.titulo,
