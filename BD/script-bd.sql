@@ -165,9 +165,17 @@
     
     USE livro_db;
 
-	UPDATE Livros SET titulo = titulo, autor, descricao
-	WHERE id_livro = id_livro;
-	
+	DELETE FROM Livros
+    WHERE id_livro = 15;
+    
+	UPDATE Livros 
+    SET titulo = "Alice no País das Maravilhas", 
+    autor = "Lewis Carroll", 
+    descricao = "O livro narra as aventuras de uma jovem chamada Alice. Ela cai em uma toca de coelho e entra em um mundo fantástico."
+	WHERE id_livro = 11;
+    
+	SELECT id_livro, titulo FROM Livros;
+    
     SELECT
     Livros.id_livro,
     Livros.titulo,

@@ -53,7 +53,6 @@ class LivroModel {
 
     //[SPRINT9]
     public function updateLivro($id, $titulo, $autor, $descricao){
-        
         $stmt = $this->db->prepare("
             UPDATE Livros 
             set titulo = :titulo,
@@ -81,6 +80,16 @@ class LivroModel {
             return $this->db->lastInsertId();
         };
         return false;
+    }
+
+    //[SPRINT10] Implementa Excluir
+    public function deleteLivro($id){
+        $stmt = $this->db->prepare("
+            DELETE FROM Livros
+            WHERE id_livro = :id
+        ");
+        $stmt->bindValue(':id', $id);
+        return $stmt->execute();
     }
 }
 

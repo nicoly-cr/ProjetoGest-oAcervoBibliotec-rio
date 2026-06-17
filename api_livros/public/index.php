@@ -65,6 +65,11 @@ try {
                 $livroController->updateLivro();
                 exit;
             }
+            //[Sprint10] Implementa Excluir
+            if ($method === 'DELETE'){
+                $livroController->deleteLivro();
+                exit;
+            }
             //[Sprint8] inserirdo mensagem de metodo nao reconhecido
             http_response_code(405); //nao reconhece o metodo
             echo json_encode([
@@ -97,6 +102,7 @@ try {
                 'error' => "Método não permitido!"
             ]);
             break;
+
     }
 } catch (Throwable $e) {
     http_response_code(500); //Internal Server Error
