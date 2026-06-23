@@ -46,6 +46,30 @@
             }
         }
 
+        async function movimentarEstoque(id_livro, quantidade_atual, tipoMovimentacao, quantidade, data){
+            if(!id_livro || !tipoMovimentacao || !quantidade || !data){
+                alert("Todos os campos precisam estar preenchidos.");
+                return;
+            }
+
+            quantidade = Number(quantidade);
+
+            if(tipoMovimentacao == "saida" && !validacaoQuantidade(quantidade, quantidade_atual)){
+                return;
+            }
+
+            const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+
+            movimentacao = {
+                id_livro: id_livro,
+                id_usuario: usuario.id_usuario,
+                quantidade_atual: quantidade_atual,
+                tipo: tipoMovimentacao,
+                quantidade: quantidade,
+                data: data
+            };
+        }  
+        
         function preencherTabela(){
             const tabelaCorpo = document.querySelector('#tabelaLivros tbody');
             tabelaCorpo.innerHTML = "";
