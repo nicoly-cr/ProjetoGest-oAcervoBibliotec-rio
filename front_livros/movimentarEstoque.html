@@ -46,6 +46,30 @@
             }
         }
 
+        function validacaoQuantidade(quantidade, quantidade_atual){
+            if(quantidade > quantidade_atual){
+                return false;
+            }
+            return true;
+        }
+
+        async function postMovimentacao() {
+            try{
+                const resposta = await fetch(`${API_BASE}/estoque`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(movimentacao)
+                });
+                const dados = await resposta.json();
+                if(!reposta.ok){
+                    throw new Error(`Erro HTTP: ${resposta.status} - ${dados.message}`);
+                }
+                return dados;
+            }catch(erro){
+                throw erro;
+            }
+        }
+
         async function movimentarEstoque(id_livro, quantidade_atual, tipoMovimentacao, quantidade, data){
             if(!id_livro || !tipoMovimentacao || !quantidade || !data){
                 alert("Todos os campos precisam estar preenchidos.");
@@ -53,7 +77,7 @@
             }
 
             quantidade = Number(quantidade);
-
+            
             if(tipoMovimentacao == "saida" && !validacaoQuantidade(quantidade, quantidade_atual)){
                 return;
             }
@@ -70,6 +94,9 @@
             };
         }  
         
+        result = await postMovimentacao(movimentacao);
+        alert(result.message);
+
         function preencherTabela(){
             const tabelaCorpo = document.querySelector('#tabelaLivros tbody');
             tabelaCorpo.innerHTML = "";

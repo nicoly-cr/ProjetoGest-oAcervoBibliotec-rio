@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS'){
 require_once '../config/db.php';
 require_once '../app/controller/UsuarioController.php';
 require_once '../app/controller/LivroController.php';
+require_once '../app/controller/EstoqueController.php';
 
 $database = new Database();
 $db = $database->getConnection();
@@ -31,6 +32,9 @@ $route = basename($path); //captura a rota (/login)
 $method = $_SERVER['REQUEST_METHOD']; //captura método HTTP (POST)
 
 $livroController = new LivroController($db);
+
+//[SPRINT 11] Implementa Gestão de Estoque
+$estoqueController = new EstoqueController($db);
 
 try {
     switch ($route) {
@@ -103,6 +107,17 @@ try {
             ]);
             break;
 
+        //[SPRINT 11] }Implementa gestão de estoque
+        case 'estoque':
+            if($method === 'PUT'){
+                $estoqueController->atualizarSaldo();
+                exit;
+            }
+            http_response_code(405); //não reconhece o método
+            echo json_encode([
+                'error' => "Método não permitido!"
+            ]);
+            break;
     }
 } catch (Throwable $e) {
     http_response_code(500); //Internal Server Error
