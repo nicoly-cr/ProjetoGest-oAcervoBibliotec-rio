@@ -10,6 +10,7 @@ header('Content-Type: application/json; charset=utf-8');
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '*'; // API recebe requisição de qualquer domínio
 header('Access-Control-Allow-Origin: ' . $origin);
 header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS'){
@@ -21,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS'){
 require_once '../config/db.php';
 require_once '../app/controller/UsuarioController.php';
 require_once '../app/controller/LivroController.php';
+//[Sprint 11] Implementa Gestão de Estoque
 require_once '../app/controller/EstoqueController.php';
 
 $database = new Database();
@@ -33,7 +35,7 @@ $method = $_SERVER['REQUEST_METHOD']; //captura método HTTP (POST)
 
 $livroController = new LivroController($db);
 
-//[SPRINT 11] Implementa Gestão de Estoque
+//[Sprint 11] Implementa Gestão de Estoque
 $estoqueController = new EstoqueController($db);
 
 try {
@@ -46,7 +48,7 @@ try {
             http_response_code(200);
         case 'login':
             if ($method === 'POST') {
-                //chamar Controller do Usuário para realizar Login
+                //chamar Controller do Usuario para realizar Login
                 $usuarioController = new UsuarioController($db);
                 $usuarioController->loginUsuario();
             }
@@ -59,7 +61,7 @@ try {
             //[Sprint8] removido break
             //break;
 
-            //[SPRINT8] Implementa Criar Novo Livro
+            //[SPRINT8] Implementa Criar Novo Livros
             if ($method === 'POST') {
                 $livroController->createLivro();
                 exit;
@@ -74,7 +76,7 @@ try {
                 $livroController->deleteLivro();
                 exit;
             }
-            //[Sprint8] inserirdo mensagem de método não reconhecido
+            //[Sprint8] inserirdo mensagem de metodo não reconhecido
             http_response_code(405); //não reconhece o método
             echo json_encode([
                 'error' => "Método não permitido em /livro"
@@ -106,10 +108,10 @@ try {
                 'error' => "Método não permitido!"
             ]);
             break;
-
-        //[SPRINT 11] }Implementa gestão de estoque
+        
+        //[Sprint 11] Implementa Gestão de Estoque
         case 'estoque':
-            if($method === 'PUT'){
+            if ($method === 'PUT'){
                 $estoqueController->atualizarSaldo();
                 exit;
             }
@@ -118,6 +120,7 @@ try {
                 'error' => "Método não permitido!"
             ]);
             break;
+
     }
 } catch (Throwable $e) {
     http_response_code(500); //Internal Server Error
