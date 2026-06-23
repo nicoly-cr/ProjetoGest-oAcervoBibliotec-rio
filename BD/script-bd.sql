@@ -164,7 +164,7 @@
     VALUES (5, 0);
     
     USE livro_db;
-
+    
 	DELETE FROM Livros
     WHERE id_livro = 15;
     

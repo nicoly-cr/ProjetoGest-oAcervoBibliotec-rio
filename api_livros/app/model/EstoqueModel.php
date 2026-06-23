@@ -14,7 +14,7 @@ class EstoqueModel {
         VALUES (:id_livro, :quantidade)
         ");
         $stmt->bindValue(':id_livro', $id_livro);
-        //[Sprint8] corrigido erro de digitacao '->'
+        //[Sprint8]
         $stmt->bindValue(':quantidade', $quantidade);
         return $stmt->execute();
     }

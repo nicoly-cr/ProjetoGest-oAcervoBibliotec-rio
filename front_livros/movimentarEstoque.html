@@ -1,15 +1,133 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+<!--front_livros/movimentarEstoque.html -->
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movimentação de Estoque</title>
 </head>
 <body>
-    <h1>Sistema de Gestão de Acervo Bibliotecário</h1>
-    <hr>
-    <h2>Movimentação de Estoque</h2>
-  
+    <div>
+        <br>
+        <h3>MENU</h3>
+        <a href="principal.html"><button>Menu Inicial</button></a>
+    </div>
+    <h1>Movimentação de Estoque</h1>
+    <table id="tabelaLivros" border="1">
+        <thead>
+            <tr>
+                <th>ㅤIDㅤ</th>
+                <th>ㅤTítuloㅤ</th>
+                <th>ㅤQuantidade Atualㅤ</th>
+                <th>ㅤTipo Movimentaçãoㅤ</th>
+                <th>ㅤQuantidadeㅤ</th>
+                <th>ㅤDataㅤ</th>
+                <th>ㅤAçãoㅤ</th>
+            </tr>
+        </thead>
+        <tbody>
+          <!--os dados da tabela serão preenchidos dinamicamente-->
+        </tbody>
+    </table>
+    <script>        
+        const API_BASE = "http://localhost/Nicoly/ProjetoGestaoAcervoBibliotecario/api_livros";
+
+        async function buscarDadosTabela() {
+            try{
+                const resposta = await fetch(`${API_BASE}/livro`);
+                if(!resposta.ok){
+                    const erroData = await resposta.json();
+                    throw new Error(erroData.message || `Erro HTTP: ${resposta.status}`);
+                }
+                const dados = await resposta.json();
+                return dados;
+            }catch(erro){
+                throw erro;                
+            }
+        }
+
+        function preencherTabela(){
+            const tabelaCorpo = document.querySelector('#tabelaLivros tbody');
+            tabelaCorpo.innerHTML = "";
+
+            if(!dados || dados.length === 0){
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = 6;
+                td.textContent = "Nenhum livro encontrado.";
+                tr.appendChild(td);
+                tabelaCorpo.appendChild(tr);
+                return;
+            }
+
+            dados.forEach(livro => {
+                const tr = document.createElement('tr');
+                // ID
+                //posiciona coluna ID da tabela através da const tdId
+                const tdId = document.createElement('td');
+                //preenche o valor do ID na célula da coluna ID
+                tdId.textContent = livro.id_livro;
+                //acrescenta a const tdId na tabela
+                tr.appendChild(tdId);
+        
+                // TÍTULO
+                const tdTitulo = document.createElement('td');
+                tdTitulo.textContent = livro.titulo;
+                tr.appendChild(tdTitulo);
+                // Quantidade Atual
+                const tdQtAtual = document.createElement('td');
+                tdQtAtual.textContent = livro.quantidade_atual;
+                tr.appendChild(tdQtAtual);
+                // TIPO MOVIMENTAÇÃO
+                const tdTipo = document.createElement('td');
+                const selectTipo = document.createElement('select');
+                    selectTipo.name = 'tipoMovimentacao';
+                const optionEntrada = document.createElement('option');
+                    optionEntrada.value = "entrada";
+                    optionEntrada.textContent = "Entrada";
+                const optionSaida = document.createElement('option');
+                    optionSaida.value = "saida";
+                    optionSaida.textContent = "Saída";
+                selectTipo.appendChild(optionEntrada);
+                selectTipo.appendChild(optionSaida);
+                tdTipo.appendChild(selectTipo);
+                tr.appendChild(tdTipo);
+                // QUANTIDADE
+                const tdQuantidade = document.createElement('td');
+                const inputQuantidade = document.createElement('input');
+                inputQuantidade.type = 'number';
+                inputQuantidade.name = 'quantidade';
+                inputQuantidade.min = 1;
+                inputQuantidade.placeholder = 'Quantidade';
+                tdQuantidade.appendChild(inputQuantidade);
+                tr.appendChild(tdQuantidade);
+                // DATA
+                const tdData = document.createElement('td');
+                const inputData = document.createElement('input');
+                inputData.type = 'date';
+                inputData.name = 'dataMovimentacao';
+                tdData.appendChild(inputData);
+                tr.appendChild(tdData);
+                // AÇÃO (botão)
+                const tdAcao = document.createElement('td');
+                const btnRegistrar = document.createElement('button');
+                btnRegistrar.type = 'button';
+                btnRegistrar.textContent = 'Registrar';
+                btnRegistrar.classList.add('btnMovimentar');
+                btnRegistrar.addEventListener('click', () =>
+                    movimentarEstoque(livro.id_livro, livro.quantidade_atual, selectTipo.value, inputQuantidade.value, inputData.value)
+                );
+                tdAcao.appendChild(btnRegistrar);
+                tr.appendChild(tdAcao);
+                tabelaCorpo.appendChild(tr);
+            });
+            
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const dados = await buscarDadosTabela();
+            preencherTabela(dados);
+        });
+    </script>
 </body>
 </html>
